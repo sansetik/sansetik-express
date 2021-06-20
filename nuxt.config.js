@@ -33,6 +33,7 @@ export default {
   ** https://nuxtjs.org/guide/plugins
   */
   plugins: [
+    { src: '@/plugins/google-api.js', mode: 'client' }
   ],
 
   /*
@@ -46,7 +47,8 @@ export default {
   */
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
-    '@nuxtjs/eslint-module'
+    '@nuxtjs/eslint-module',
+    '@nuxtjs/google-fonts'
   ],
 
   /*
@@ -77,5 +79,15 @@ export default {
   ** See https://nuxtjs.org/api/configuration-build/
   */
   build: {
+  },
+  buildDir: 'dist',
+  googleFonts: {
+    download: true,
+    preload: true,
+    families: {
+      Roboto: true,
+      Comfortaa: true
+
+    }
   }
 }
