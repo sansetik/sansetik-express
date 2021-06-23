@@ -1,38 +1,40 @@
 ﻿  <template>
     <div class="menu">
-    <div class="logo">
-      <nuxt-link to="/">sansetik</nuxt-link>
-    </div>
-    <div class="some_menu">
-      <ul>
-        <li><nuxt-link to="/">Главная</nuxt-link></li>
-        <li><nuxt-link to="/blog">Блог</nuxt-link></li>
-        <li><nuxt-link to="/portfolio">Портфолио</nuxt-link></li>
-        <li><nuxt-link to="/services">Услуги</nuxt-link></li>
-        <li><nuxt-link to="/about">О Сайте</nuxt-link></li>
-      </ul>
-    </div>
-    <div class="login">
 
-      <div class="zuza">
-        <div class="img_url" v-if="check_login"><img :src="img_url" alt=""> </div>
-        <div v-if="check_login">Привет - {{name}} </div>
-        <div>
-          <button v-if="check_login" @click="out">Выйти</button>
-          <button v-else @click="login" ><span class="google_img"><img src="@/static/img/ant-design_google-circle-filled.svg" alt=""></span><span class="login_b">Вход</span> <span class="login_img"><img src="@/static/img/Arrow.svg" alt=""></span></button>
+      <div class="logo">
+        <nuxt-link to="/">sansetik</nuxt-link>
+      </div>
+      <div class="some_menu">
+        <ul>
+          <li><nuxt-link to="/">Главная</nuxt-link></li>
+          <li><nuxt-link to="/blog">Блог</nuxt-link></li>
+          <li><nuxt-link to="/portfolio">Портфолио</nuxt-link></li>
+          <li><nuxt-link to="/services">Услуги</nuxt-link></li>
+          <li><nuxt-link to="/about">О Сайте</nuxt-link></li>
+        </ul>
+      </div>
+      <div class="login">
+
+        <div class="zuza">
+          <div class="img_url" v-if="check_login"><img :src="img_url" alt=""> </div>
+          <div v-if="check_login">Привет - {{name}} </div>
+          <div>
+            <button v-if="check_login" @click="out">Выйти</button>
+            <button v-else @click="login" ><span class="google_img"><img src="@/static/img/ant-design_google-circle-filled.svg" alt=""></span><span class="login_b">Вход</span> <span class="login_img"><img src="@/static/img/Arrow.svg" alt=""></span></button>
+          </div>
         </div>
       </div>
-    </div>
     </div>
   </template>
 <script lang="js">
 import Vue from 'vue'
+
 export default Vue.extend({
   data () {
     return {
       check_login: false,
       name: '',
-      img_url: ''
+      img_url: '',
     }
   },
   name: 'AppMenu',
@@ -66,8 +68,23 @@ export default Vue.extend({
         // eslint-disable-next-line camelcase
         console.log('ID Token: ' + id_token)
         this.check_login = true
+        this.$http.$post('/api/save', {
+          ID: profile.getId(),
+          FullName: profile.getFamilyName(),
+          Name: profile.getName(),
+          LastName: profile.getFamilyName(),
+          ImageURL: profile.getImageUrl(),
+          Email: profile.getEmail(),
+          IdToken: googleUser.getAuthResponse().id_token,
+          PinCode: 1581,
+          PinCodeQuestions: 'Quest',
+          Country: 'Ukraine',
+          City: 'Kyiv',
+          Hobby: 'Kill Dendy'
+        })
       })
     }
+
   },
   mounted () {
     const _onInit = (auth2) => {

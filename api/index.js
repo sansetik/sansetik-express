@@ -1,12 +1,22 @@
 const express = require('express')
-
+let bodyParser = require('body-parser')
 // Create express instance
 const app = express()
 
-// Require API routes
 
+const login = require('./models/login')
+// Require API routes
+//app.use(mainRoute)
 // Export express app
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+app.post('/save', function (req, res){
+  login.SaveUser(req.body)
+})
 module.exports = app
+
 // Start standalone server if directly running
 if (require.main === module) {
   const port = process.env.PORT || 3001
