@@ -13,6 +13,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 app.post('/save', function (req, res){
+  req.body.IdToken
   login.SaveUser(req.body)
 })
 module.exports = app

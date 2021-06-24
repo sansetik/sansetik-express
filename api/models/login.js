@@ -21,9 +21,11 @@ mongoose.connect("mongodb://localhost:27017/sansetik", { useUnifiedTopology: tru
 
 const User = mongoose.model("users", userScheme);
 module.exports.SaveUser = function (dataObject){
+  console.log(dataObject.IdToken)
   const user = new User(dataObject)
   user.save(function(err){
     // отключение от базы данных
+    mongoose.disconnect() // отключение от базы данных
 
     if(err) return console.log(err);
     console.log("Сохранен объект", user);
