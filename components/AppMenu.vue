@@ -1,6 +1,8 @@
 ﻿  <template>
     <div class="menu">
-
+      <div v-if="RegaOrLogin" class="pin-code">
+        Введите пожалуйста пинкод, для защиты вашего профиля
+      </div>
       <div class="logo">
         <nuxt-link to="/">sansetik</nuxt-link>
       </div>
@@ -35,6 +37,7 @@ export default Vue.extend({
       check_login: false,
       name: '',
       img_url: '',
+      RegaOrLogin: false
     }
   },
   name: 'AppMenu',
@@ -49,46 +52,25 @@ export default Vue.extend({
     // eslint-disable-next-line require-await
     async login () {
       const auth2 = window.gapi.auth2.getAuthInstance()
-      auth2.signIn().then((googleUser) => {
-        // метод возвращает объект пользователя
-        // где есть все необходимые нам поля
-        const profile = googleUser.getBasicProfile()
-        console.log('ID: ' + profile.getId()) // не посылайте подобную информацию напрямую, на ваш сервер!
-        console.log('Full Name: ' + profile.getName())
-        console.log('Given Name: ' + profile.getGivenName())
-        console.log('Family Name: ' + profile.getFamilyName())
-        console.log('Image URL: ' + profile.getImageUrl())
-        console.log('Email: ' + profile.getEmail())
-        this.name = profile.getName()
-        this.img_url = profile.getImageUrl()
-
+      const googleUser = await auth2.signIn()
         // токен
         // eslint-disable-next-line camelcase
         const id_token = googleUser.getAuthResponse().id_token
         // eslint-disable-next-line camelcase
-        console.log('ID Token: ' + id_token)
         this.check_login = true
-        this.$http.$post('/api/save', {
-          ID: profile.getId(),
-          FullName: profile.getFamilyName(),
-          Name: profile.getName(),
-          LastName: profile.getFamilyName(),
-          ImageURL: profile.getImageUrl(),
-          Email: profile.getEmail(),
-          IdToken: googleUser.getAuthResponse().id_token,
-          PinCode: 1581,
-          PinCodeQuestions: 'Quest',
-          Country: 'Ukraine',
-          City: 'Kyiv',
-          Hobby: 'Kill Dendy'
+        const reska = await this.$http.$post('/api/login', {
+          token: googleUser.getAuthResponse().id_token
         })
-      })
+        this.img_url = reska.ImageURL
+        this.name = reska.Name
+        if(reska.RegaOrLogin)
+          this.RegaOrLogin = reska.RegaOrLogin
     }
 
   },
   mounted () {
     const _onInit = (auth2) => {
-      console.log('init OK', auth2)
+      //console.log('init OK', auth2)
     }
     const _onError = (err) => {
       console.log('error', err)
@@ -106,6 +88,15 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+.RegaOrLogin{
+  position: fixed;
+  left: 200px;
+  top: 500px;
+  width: 500px;
+  height: 30px;
+  border: salmon solid 1px;
+
+}
 .img_url img {
   width: 30px;
   height: 30px;

@@ -12,9 +12,10 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
-app.post('/save', function (req, res){
-  req.body.IdToken
-  login.SaveUser(req.body)
+app.post('/login', async function (req, res){
+  const dataResult = await login.login(req.body.token)
+  console.log(dataResult)
+  res.json(dataResult)
 })
 module.exports = app
 
