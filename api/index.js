@@ -14,7 +14,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.post('/login', async function (req, res){
   const dataResult = await login.login(req.body.token)
-  console.log(dataResult)
   res.json(dataResult)
 })
 module.exports = app

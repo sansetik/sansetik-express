@@ -20,7 +20,10 @@ const userScheme = new Schema({
   Hobby: String,
   BirthDayData: Date
 });
-mongoose.connect("mongodb://localhost:27017/sansetik", { useUnifiedTopology: true, useNewUrlParser: true })
+function Connect(){
+  mongoose.connect("mongodb://localhost:27017/sansetik", { useUnifiedTopology: true, useNewUrlParser: true })
+}
+
 
 
 
@@ -39,10 +42,10 @@ async function getDataFromToken (token) {
     return e
   }
 }
-
 async function getUser(IdToken) {
   const dataFromToken = await getDataFromToken(IdToken)
   if(dataFromToken){
+    Connect()
     const tokenResult = await User.findOne({ID: dataFromToken.sub})
     mongoose.disconnect()
     if(tokenResult){
@@ -51,10 +54,33 @@ async function getUser(IdToken) {
   }
   else return false;
 }
-module.exports.login =  async function(IdToken) {
+module.exports.login =  async function (IdToken) {
   const dataFromToken = await getDataFromToken(IdToken)
   const data = await getUser(IdToken)
+  const user = new User({
+    ID: dataFromToken.sub,
+    FullName: dataFromToken.given_name,
+    Name: dataFromToken.name,
+    LastName: dataFromToken.name,
+    ImageURL: dataFromToken.picture,
+    Email: dataFromToken.email,
+    IdToken: IdToken,
+    PinCode: '54875',
+    PinCodeQuestions: 'Hello My Name is Vasya',
+    Country: dataFromToken.locale,
+    City: 'String',
+    Hobby: 'String'
+  })
   if (data) { //Авторизация
+    Connect()
+    console.log(dataFromToken.sub)
+    console.log(typeof dataFromToken.sub)
+    User.updateOne({ID: dataFromToken.sub},{
+      $set: {
+        IdToken:"Zalupa"
+      }
+    })
+    mongoose.disconnect()
     return {
       ID: dataFromToken.sub,
       FullName: dataFromToken.given_name,
@@ -63,28 +89,14 @@ module.exports.login =  async function(IdToken) {
       ImageURL: dataFromToken.picture,
       Email: dataFromToken.email,
       IdToken: IdToken,
-      PinCode: '54875',
-      PinCodeQuestions: 'Hello My Name is Vasya',
       Country: dataFromToken.locale,
       City: 'String',
       Hobby: 'String',
       RegaOrLogin: false
     }
   } else { // Регистрация
-    const user = new User({
-       ID: dataFromToken.sub,
-       FullName: dataFromToken.given_name,
-       Name: dataFromToken.name,
-       LastName: dataFromToken.name,
-       ImageURL: dataFromToken.picture,
-       Email: dataFromToken.email,
-       IdToken: IdToken,
-       PinCode: '54875',
-       PinCodeQuestions: 'Hello My Name is Vasya',
-       Country: dataFromToken.locale,
-       City: 'String',
-       Hobby: 'String'
-    })
+
+    Connect()
     user.save(function (err) {
       // отключение от базы данных
       mongoose.disconnect() // отключение от базы данных
@@ -100,8 +112,6 @@ module.exports.login =  async function(IdToken) {
       ImageURL: dataFromToken.picture,
       Email: dataFromToken.email,
       IdToken: IdToken,
-      PinCode: '54875',
-      PinCodeQuestions: 'Hello My Name is Vasya',
       Country: dataFromToken.locale,
       City: 'String',
       Hobby: 'String',
@@ -109,23 +119,3 @@ module.exports.login =  async function(IdToken) {
     }
   }
 }
-
-
-// module.exports.SaveUser = async function (dataObject){
-//
-//   //console.log(token_result.sub)
-//   // copmlete_data = {
-//   //   ID: token_result.sub,
-//   //   FullName: token_result.given_name,
-//   //   Name: token_result.name,
-//   //   LastName: 'String',
-//   //   ImageURL: token_result.picture,
-//   //   Email: token_result.email,
-//   //   IdToken: dataObject.IdToken,
-//   //   PinCode: 2222,
-//   //   PinCodeQuestions: 'String',
-//   //   Country: token_result.locale,
-//   //   City: 'String',
-//   //   Hobby: 'String'
-//   // }
-
