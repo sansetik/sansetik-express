@@ -1,5 +1,7 @@
 ﻿<template>
-<div class="blog">45645</div>
+<div class="blog">
+  <h1>Писюняра здорова</h1>
+</div>
 </template>
 
 <script>

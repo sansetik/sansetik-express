@@ -20,9 +20,7 @@ const userScheme = new Schema({
   Hobby: String,
   BirthDayData: Date
 });
-function Connect(){
   mongoose.connect("mongodb://localhost:27017/sansetik", { useUnifiedTopology: true, useNewUrlParser: true })
-}
 
 
 
@@ -45,15 +43,14 @@ async function getDataFromToken (token) {
 async function getUser(IdToken) {
   const dataFromToken = await getDataFromToken(IdToken)
   if(dataFromToken){
-    Connect()
     const tokenResult = await User.findOne({ID: dataFromToken.sub})
-    mongoose.disconnect()
     if(tokenResult){
       return dataFromToken;
     }else return false;
   }
   else return false;
 }
+
 module.exports.login =  async function (IdToken) {
   const dataFromToken = await getDataFromToken(IdToken)
   const data = await getUser(IdToken)
@@ -72,14 +69,9 @@ module.exports.login =  async function (IdToken) {
     Hobby: 'String'
   })
   if (data) { //Авторизация
-    Connect()
     console.log(dataFromToken.sub)
     console.log(typeof dataFromToken.sub)
-    User.updateOne({ID: dataFromToken.sub},{
-      $set: {
-        IdToken:"Zalupa"
-      }
-    })
+    User.findOneAndUpdate({"Name": "Sandena3"}, {"Country": "99999"});
     mongoose.disconnect()
     return {
       ID: dataFromToken.sub,
@@ -96,7 +88,6 @@ module.exports.login =  async function (IdToken) {
     }
   } else { // Регистрация
 
-    Connect()
     user.save(function (err) {
       // отключение от базы данных
       mongoose.disconnect() // отключение от базы данных
