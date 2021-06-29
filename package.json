@@ -19,5 +19,7 @@
     "mongoose": "^5.12.14",
     "nuxt": "latest"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@nuxt/types": "~2.15.0"
+  }
 }
