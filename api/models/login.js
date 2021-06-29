@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const axios = require('axios');
 
-//The url we want is: 'www.random.org/integers/?num=1&min=1&max=10&col=1&base=10&format=plain&rnd=new'
+mongoose.set('useFindAndModify', false);
+
 
 // установка схемы
 const userScheme = new Schema({
@@ -21,7 +22,7 @@ const userScheme = new Schema({
   BirthDayData: Date
 });
   mongoose.connect("mongodb://localhost:27017/sansetik", { useUnifiedTopology: true, useNewUrlParser: true })
-
+console.log("Zalupa")
 
 
 
@@ -71,8 +72,11 @@ module.exports.login =  async function (IdToken) {
   if (data) { //Авторизация
     console.log(dataFromToken.sub)
     console.log(typeof dataFromToken.sub)
-    User.findOneAndUpdate({"Name": "Sandena3"}, {"Country": "99999"});
-    mongoose.disconnect()
+    User.updateOne({ ID: dataFromToken.sub }, { IdToken: IdToken }, function(err, result){
+
+      if(err) return console.log(err);
+      console.log(result);
+    });
     return {
       ID: dataFromToken.sub,
       FullName: dataFromToken.given_name,
@@ -90,8 +94,6 @@ module.exports.login =  async function (IdToken) {
 
     user.save(function (err) {
       // отключение от базы данных
-      mongoose.disconnect() // отключение от базы данных
-
       if (err) return console.log(err);
       console.log("Сохранен объект", user);
     })
